@@ -24,6 +24,13 @@ Resources:
       InstanceType: t2.micro
       SecurityGroups:
         - !Ref WebServerHelloWorld
+      BlockDeviceMappings:
+        - DeviceName: /dev/sdc
+          Ebs:
+            VolumeSize: 50
+            VolumeType: gp3
+            Iops: 3000
+            DeleteOnTermination: true
       UserData:
         Fn::Base64: |
           #!/bin/bash
