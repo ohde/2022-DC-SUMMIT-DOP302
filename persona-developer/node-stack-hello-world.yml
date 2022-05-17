@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Node HelloWord Demo
+
+Resources: 
+  WebServerHelloWorld:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH (TCP port 22) and HTTP (TCP port 3000) in
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '3000'
+          ToPort: '3000'
+          CidrIp: 0.0.0.0/0
+
+
+  HellWorldInstance:
+    Type: AWS::EC2::Instance               
+    Properties:
+      ImageId: ami-0022f774911c1d690
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref WebServerHelloWorld
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install git -y
+          curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+
+          yum install nodejs -y
+          git clone https://github.com/AdamTylerLynch/node-helloworld
+          cd node-helloworld
+          node app.js
