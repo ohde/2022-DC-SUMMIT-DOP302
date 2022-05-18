@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Node HelloWord Demo
 
-Resources: 
+Resources:
 
   HellWorldInstance:
-    Type: AWS::EC2::Instance               
+    Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-0022f774911c1d690
       InstanceType: t2.micro
@@ -54,4 +54,3 @@ Resources:
           FromPort: '3000'
           ToPort: '3000'
           CidrIp: 0.0.0.0/0
-
