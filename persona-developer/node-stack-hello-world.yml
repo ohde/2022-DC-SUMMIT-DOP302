@@ -2,30 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Node HelloWord Demo
 
 Resources: 
-  HelloWorldSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow SSH (TCP port 22) and HTTP (TCP port 3000) in
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '3000'
-          ToPort: '3000'
-          CidrIp: 0.0.0.0/0
-  StorageVolume:
-    Type: AWS::EC2::Volume
-    Properties:
-      Size: 10
-      AvailabilityZone: "us-east-1a"
-  MountPoint:
-    Type: AWS::EC2::VolumeAttachment
-    Properties:
-      InstanceId: !Ref HellWorldInstance
-      VolumeId: !Ref StorageVolume
-      Device: /dev/sdc
+
   HellWorldInstance:
     Type: AWS::EC2::Instance               
     Properties:
@@ -40,14 +17,41 @@ Resources:
           yum update -y
           yum install git -y
           curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-
           yum install nodejs -y
           git clone https://github.com/AdamTylerLynch/node-helloworld
           cd node-helloworld
           node app.js
-  
+
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       AccessControl: Private
     DeletionPolicy: Retain
+
+  StorageVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      Size: 10
+      AvailabilityZone: "us-east-1a"
+
+  MountPoint:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      InstanceId: !Ref HellWorldInstance
+      VolumeId: !Ref StorageVolume
+      Device: /dev/sdc
+
+  HelloWorldSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH (TCP port 22) and HTTP (TCP port 3000) in
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '3000'
+          ToPort: '3000'
+          CidrIp: 0.0.0.0/0
+

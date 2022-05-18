@@ -1,15 +1,3 @@
-# Create a variable named 'aws_ec2_volume_resources' that selects all resources of type "AWS::EC2::Volume"
-# in the input resource template 
-let aws_ec2_volume_resources = Resources.*[ Type == 'AWS::EC2::Volume' ]
-
-# Create a rule named aws_ec2_volume that filters on "AWS::EC2::Volume" type being present in the template 
-rule aws_ec2_volume when %aws_ec2_volume_resources !empty {
-    %aws_ec2_volume_resources.Properties.Encrypted == true
-}
-
-
-
-   
 let s3_buckets = Resources.*[ Type == 'AWS::S3::Bucket' ]
 let allowed_algos = ["aws:kms"]
 
@@ -17,4 +5,11 @@ rule s3_buckets_allowed_sse_algorithm when %s3_buckets !empty {
     let encryption = %s3_buckets.Properties.BucketEncryption
     %encryption exists
     %encryption.ServerSideEncryptionConfiguration[*].ServerSideEncryptionByDefault.SSEAlgorithm in %allowed_algos
+}
+
+
+let aws_ec2_volume_resources = Resources.*[ Type == 'AWS::EC2::Volume' ]
+
+rule aws_ec2_volume when %aws_ec2_volume_resources !empty {
+    %aws_ec2_volume_resources.Properties.Encrypted == true
 }
