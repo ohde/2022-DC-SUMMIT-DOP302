@@ -1,7 +1,46 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Node HelloWord Demo
 
-Resources: 
+Resources:
+
+  HellWorldInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0022f774911c1d690
+      InstanceType: t2.micro
+      AvailabilityZone: "us-east-1a"
+      SecurityGroups:
+        - !Ref HelloWorldSecurityGroup
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install git -y
+          curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
+          yum install nodejs -y
+          git clone https://github.com/AdamTylerLynch/node-helloworld
+          cd node-helloworld
+          node app.js
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: Private
+    DeletionPolicy: Retain
+
+  StorageVolume:
+    Type: AWS::EC2::Volume
+    Properties:
+      Size: 10
+      AvailabilityZone: "us-east-1a"
+
+  MountPoint:
+    Type: AWS::EC2::VolumeAttachment
+    Properties:
+      InstanceId: !Ref HellWorldInstance
+      VolumeId: !Ref StorageVolume
+      Device: /dev/sdc
+
   HelloWorldSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -15,39 +54,3 @@ Resources:
           FromPort: '3000'
           ToPort: '3000'
           CidrIp: 0.0.0.0/0
-  StorageVolume:
-    Type: AWS::EC2::Volume
-    Properties:
-      Size: 10
-      AvailabilityZone: "us-east-1a"
-  MountPoint:
-    Type: AWS::EC2::VolumeAttachment
-    Properties:
-      InstanceId: !Ref HellWorldInstance
-      VolumeId: !Ref StorageVolume
-      Device: /dev/sdc
-  HellWorldInstance:
-    Type: AWS::EC2::Instance               
-    Properties:
-      ImageId: ami-0022f774911c1d690
-      InstanceType: t2.micro
-      AvailabilityZone: "us-east-1a"
-      SecurityGroups:
-        - !Ref HelloWorldSecurityGroup
-      UserData:
-        Fn::Base64: |
-          #!/bin/bash
-          yum update -y
-          yum install git -y
-          curl -sL https://rpm.nodesource.com/setup_lts.x | bash -
-
-          yum install nodejs -y
-          git clone https://github.com/AdamTylerLynch/node-helloworld
-          cd node-helloworld
-          node app.js
-  
-  S3Bucket:
-    Type: 'AWS::S3::Bucket'
-    Properties:
-      AccessControl: Private
-    DeletionPolicy: Retain
