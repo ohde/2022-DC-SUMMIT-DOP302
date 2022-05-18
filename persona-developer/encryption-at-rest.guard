@@ -1,15 +1,15 @@
-let s3_buckets = Resources.*[ Type == 'AWS::S3::Bucket' ]
-let allowed_algos = ["aws:kms"]
+let s3_bucket_resources = Resources.*[ Type == 'AWS::S3::Bucket' ]
 
-rule s3_buckets_allowed_sse_algorithm when %s3_buckets !empty {
-    let encryption = %s3_buckets.Properties.BucketEncryption
-    %encryption exists
-    %encryption.ServerSideEncryptionConfiguration[*].ServerSideEncryptionByDefault.SSEAlgorithm in %allowed_algos
+rule s3_bucket when %s3_bucket_resources !empty {
+    %s3_bucket_resources.Properties.BucketEncryption exists <<S3 Buckets must have encryption specified (BucketEncryption)>>
 }
 
 
-let aws_ec2_volume_resources = Resources.*[ Type == 'AWS::EC2::Volume' ]
+let ec2_volume_resources = Resources.*[ Type == 'AWS::EC2::Volume' ]
 
-rule aws_ec2_volume when %aws_ec2_volume_resources !empty {
-    %aws_ec2_volume_resources.Properties.Encrypted == true
+rule ec2_volume when %ec2_volume_resources !empty {
+    %ec2_volume_resources.Properties {
+        Encrypted exists
+        Encrypted == true <<EC2 Volumes must have encryption enabled (Encrypted)>>
+    }
 }
