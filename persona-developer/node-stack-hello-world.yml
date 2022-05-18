@@ -11,6 +11,9 @@ Resources:
       AvailabilityZone: "us-east-1a"
       SecurityGroups:
         - !Ref HelloWorldSecurityGroup
+      Tags:
+        - Key: "owner"
+          Value: "awstyler@"
       UserData:
         Fn::Base64: |
           #!/bin/bash
@@ -26,6 +29,9 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       AccessControl: Private
+      Tags:
+        - Key: "owner"
+          Value: "awstyler@"
     DeletionPolicy: Retain
 
   StorageVolume:
@@ -33,6 +39,9 @@ Resources:
     Properties:
       Size: 10
       AvailabilityZone: "us-east-1a"
+      Tags:
+        - Key: "owner"
+          Value: "awstyler@"
 
   MountPoint:
     Type: AWS::EC2::VolumeAttachment
